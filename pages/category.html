@@ -1,0 +1,107 @@
+<% layout("@layouts/layout") %>
+
+<div class="w-full">
+  <!-- Header aprimorado -->
+  <div class="p-8 bg-gradient-to-r from-[#18191c] via-[#2a0e0e] to-[#18191c] border-b border-[#e04a3f]/30 rounded-t-2xl shadow-lg flex items-center gap-4 animate-fade-in-down relative overflow-hidden">
+    <span class="absolute left-4 top-4 w-2 h-2 bg-[#e04a3f] rounded-full opacity-40 animate-particle1"></span>
+    <span class="absolute right-8 top-2 w-1.5 h-1.5 bg-[#a12b2b] rounded-full opacity-30 animate-particle2"></span>
+    <span class="absolute left-1/2 top-0 w-1 h-1 bg-white rounded-full opacity-20 animate-particle3"></span>
+    <i class="fa-solid fa-layer-group text-3xl text-[#e04a3f] animate-bounce"></i>
+    <h1 class="text-3xl font-extrabold uppercase tracking-widest text-white drop-shadow-lg animate-glow"><%= cc.category.name %></h1>
+  </div>
+
+  <% if (cc.packages.data.length > 0) { %>
+    <!-- Products Grid aprimorado -->
+    <div class="grid grid-cols-1 gap-6 p-8 lg:grid-cols-3 animate-fade-in-up">
+      <% cc.packages.data.forEach((package, index) => { %>
+        <%~ include('@components/package', {package, ...cc}) %>
+      <% }) %>
+    </div>
+
+    <!-- Paginação aprimorada -->
+    <div class="flex justify-center items-center p-6 select-none gap-1 animate-fade-in-up">
+      <% const meta = cc.packages.meta %>
+      <% const items = [1] %>
+      <% let r = 2 %>
+      <% let r1 = meta.current_page - r %>
+      <% let r2 = meta.current_page + r %>
+      <% for (let i = r1 > 2 ? r1 : 2; i <= Math.min(meta.last_page, r2); i++) items.push(i) %>
+      <% if (r2 + 1 < meta.last_page) items.push('…') %>
+      <% if (r2 < meta.last_page) items.push(meta.last_page) %>
+    
+      <!-- Previous Page Button -->
+      <a 
+        class="h-10 w-10 flex items-center justify-center border border-[#e04a3f]/30 bg-[#18191c]/60 rounded-l-xl text-white hover:bg-[#e04a3f]/20 transition-all duration-200 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none"
+        href="<%= `/category/${cc.category.slug}` + meta.previous_page_url %>"
+        data-disabled="<%= !meta.previous_page_url ? 'true' : 'false' %>"
+      >
+        <i class="fa-solid fa-chevron-left"></i>
+      </a>
+    
+      <!-- Page Numbers -->
+      <% items.forEach((page) => { %>
+        <a 
+          class="h-10 w-10 flex items-center justify-center border-y border-[#e04a3f]/30 text-white font-bold transition-all duration-200 data-[current=true]:bg-gradient-to-r data-[current=true]:from-[#e04a3f]/80 data-[current=true]:to-[#a12b2b]/80 data-[current=true]:text-white data-[current=true]:shadow-lg data-[disabled=true]:pointer-events-none"
+          href="<%= cc.dist_url + `/category/${cc.category.slug}/?page=${page}` %>"
+          data-current="<%= meta.current_page === page ? 'true' : 'false' %>"
+          data-disabled="<%= page === '…' %>"
+        >
+          <%= page %>
+        </a>
+      <% }) %>
+    
+      <!-- Next Page Button -->
+      <a 
+        class="h-10 w-10 flex items-center justify-center border border-[#e04a3f]/30 bg-[#18191c]/60 rounded-r-xl text-white hover:bg-[#e04a3f]/20 transition-all duration-200 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none"
+        href="<%= cc.dist_url + `/category/${cc.category.slug}` + meta.next_page_url %>"
+        data-disabled="<%= !meta.next_page_url ? 'true' : 'false' %>"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+      </a>
+    </div>
+  <% } else { %>
+    <!-- Empty State aprimorado -->
+    <div class="p-8">
+      <div class="p-6 bg-gradient-to-r from-[#18191c] via-[#2a0e0e] to-[#18191c] border border-[#e04a3f]/30 rounded-2xl shadow-lg flex flex-col items-center gap-2 animate-fade-in-up">
+        <i class="fa-solid fa-box-open text-3xl text-[#e04a3f] animate-bounce"></i>
+        <p class="text-[#bfc9d8] text-lg">Nenhum pacote encontrado nesta categoria.</p>
+      </div>
+    </div>  
+  <% } %>
+  <style>
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-up { animation: fade-in-up 1s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes fade-in-down {
+      0% { opacity: 0; transform: translateY(-30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-down { animation: fade-in-down 1s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 6px #e04a3f);}
+      50% { filter: drop-shadow(0 0 18px #e04a3f);}
+      100% { filter: drop-shadow(0 0 6px #e04a3f);}
+    }
+    .animate-glow { animation: glow 2s infinite alternate;}
+    @keyframes particle1 {
+      0% { left:10%; top:30%; opacity:.4;}
+      50% { left:80%; top:10%; opacity:.1;}
+      100% { left:10%; top:30%; opacity:.4;}
+    }
+    .animate-particle1 { animation: particle1 7s infinite linear; }
+    @keyframes particle2 {
+      0% { left:70%; top:60%; opacity:.3;}
+      50% { left:20%; top:80%; opacity:.1;}
+      100% { left:70%; top:60%; opacity:.3;}
+    }
+    .animate-particle2 { animation: particle2 9s infinite linear; }
+    @keyframes particle3 {
+      0% { left:50%; top:20%; opacity:.2;}
+      50% { left:60%; top:70%; opacity:.1;}
+      100% { left:50%; top:20%; opacity:.2;}
+    }
+    .animate-particle3 { animation: particle3 8s infinite linear; }
+  </style>
+</div>

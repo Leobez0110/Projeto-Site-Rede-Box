@@ -1,0 +1,64 @@
+<% if (cc.user) { %>
+  <!-- Bloco do usuário logado, com avatar, nome e menu dropdown animado -->
+  <div class="relative group">
+    <button id="user-menu-button" class="flex items-center gap-3 px-3 py-2 rounded-xl bg-gradient-to-tr from-[#e04a3f]/10 to-[#a12b2b]/10 shadow-lg border border-[#e04a3f]/20 hover:bg-primary/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary">
+      <!-- Avatar do usuário -->
+      <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#e04a3f] to-[#a12b2b] flex items-center justify-center shadow-lg border-2 border-white/10 overflow-hidden">
+        <img src="<%= cc.user.avatar || '/default-avatar.png' %>" alt="Avatar" class="w-9 h-9 rounded-full object-cover group-hover:scale-110 transition-transform duration-200" />
+      </div>
+      <!-- Nome e perfil -->
+      <div class="text-left hidden sm:block">
+        <p class="text-base font-bold text-white drop-shadow-lg"><%= cc.user.name %></p>
+        <p class="text-xs text-primary/80">Meu perfil</p>
+      </div>
+      <!-- Ícone de seta -->
+      <i data-lucide="chevron-down" class="w-5 h-5 text-primary hidden sm:block transition-transform duration-200 group-hover:rotate-180"></i>
+    </button>
+
+    <!-- Dropdown do usuário -->
+    <div id="user-dropdown" class="z-50 absolute right-0 mt-2 w-56 bg-gradient-to-br from-black/90 via-[#a12b2b]/30 to-black/90 border border-[#e04a3f]/20 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-200 transform scale-95 origin-top-right backdrop-blur-md">
+      <div class="py-2">
+        <a href="/account/orders" class="flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white hover:bg-[#e04a3f]/10 transition-colors rounded-lg">
+          <i data-lucide="package" class="w-5 h-5 text-primary"></i>
+          Meus pedidos
+        </a>
+        <hr class="border-[#e04a3f]/20 my-2">
+        <button id="logout-button" class="flex items-center gap-2 px-5 py-3 text-sm font-semibold text-red-500 hover:bg-red-500/10 transition-colors w-full text-left rounded-lg">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
+          Sair da conta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dropdown animação e clique fora para fechar
+    const userMenuButton = document.getElementById('user-menu-button')
+    const userDropdown = document.getElementById('user-dropdown')
+    const logoutButton = document.getElementById('logout-button')
+
+    userMenuButton.addEventListener('click', () => {
+      userDropdown.classList.toggle('opacity-0')
+      userDropdown.classList.toggle('invisible')
+      userDropdown.classList.toggle('scale-95')
+    })
+
+    document.addEventListener('click', (e) => {
+      if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.classList.add('opacity-0', 'invisible', 'scale-95')
+      }
+    })
+
+    logoutButton.addEventListener('click', () => {
+      CentralCart.logout().then(() => {
+        window.location.href = '/'
+      })
+    })
+  </script>
+<% } else { %>
+  <!-- Botão de login para usuário não autenticado -->
+  <a href="/login" class="h-10 px-4 font-bold text-white bg-gradient-to-tr from-[#e04a3f]/30 to-[#a12b2b]/30 border border-[#e04a3f]/20 rounded-xl flex gap-2 items-center shadow-lg hover:bg-primary/20 transition-all duration-200">
+    <i data-lucide="log-in" class="w-5 h-5"></i>
+    <span class="hidden sm:inline">Entrar</span>
+  </a>
+<% } %>

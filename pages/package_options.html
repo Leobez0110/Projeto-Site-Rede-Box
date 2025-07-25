@@ -1,0 +1,55 @@
+<div class="border-b p-4">
+  <h5 class="text-xl font-semibold"><%= cc.package.name %></h5>
+  <button
+    type="button"
+    class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
+    aria-label="Fechar"
+    data-micromodal-close
+  >
+    <i class="fa-solid fa-times text-xl"></i>
+  </button>
+</div>
+
+<div class="p-4">
+  <div id="option_wrapper" class="flex flex-col space-y-2">
+    <% cc.package.variables.forEach((variable, index) => { %>
+      <% const cart_package = cc.cart.packages.find((cp) => cp.package_id === cc.package.id) %>
+      <% const selected_option = cart_package?.options.find((option) => option.variable.id === variable.id) %>
+
+      <div class="space-y-1">
+        <label for="<%= variable.name %>"><%= variable.description %>:</label>
+
+        <% if (variable.type === 'SELECT') { %>
+          <select id="<%= variable.name %>" class="h-10 w-full">
+            <% variable.options.forEach((option, index) => { %>
+              <option 
+                value="<%= option.id %>" 
+                <%= selected_option?.variable_option_id === option.id ? 'selected': '' %>
+              >
+                <%= option.name %> <%= option.price ? `(${option.price_display})` : '' %>
+              </option>
+            <% }) %> 
+          </select>
+        <% } else { %>
+          <input id="<%= variable.name %>" type="<% variable.type === 'TEXT' ? 'text' : 'number' %>" value="<%= selected_option?.value || '' %>">
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<div class="p-4 border-t flex justify-end gap-4">
+  <button class="btn-outline" data-micromodal-close>
+    Cancelar
+  </button>
+
+  <% const current_cart_item = cc.cart?.packages.find((package) => package.meta.id === cc.package.id) %>
+  <button id="<%= cc.package.id %>"
+    data-func="<%= current_cart_item ? 'update-options' : 'add-to-cart' %>"
+    data-slug="<%= cc.package.slug %>"
+    class="btn-primary"
+  >
+    <i class="me-2 fa-solid fa-basket-shopping"></i>
+    <%= current_cart_item ? 'Atualizar' : 'Adicionar ao carrinho' %>
+  </button>
+</div>

@@ -1,0 +1,47 @@
+<footer class="bg-gradient-to-t from-[#18191c] to-[#2a0e0e] border-t border-[#a12b2b]/40 shadow-inner mt-16 font-['Poppins']">
+  <div class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6 py-8 px-4">
+    <div class="flex items-center gap-4">
+      <% if (cc.theme.logo) { %>
+        <a href="/" class="transition-transform duration-200 hover:scale-105">
+          <img src="<%= cc.theme.logo %>" class="w-[72px] drop-shadow-[0_2px_8px_rgba(224,74,63,0.25)]" />
+        </a>
+      <% } %>
+      <div>
+        <p class="text-lg font-bold text-white drop-shadow-sm tracking-wide">
+          <%= cc.store.name %> <span class="font-normal text-[#e04a3f]">© <%= new Date().getFullYear() %></span>
+        </p>
+        <% if (cc.store.type !== 'STANDALONE') { %>
+          <p class="text-xs text-[#bfc9d8] mt-1">
+            Não somos afiliados a <%= ['FIVEM', 'REDM', 'GTA-SA'].includes(cc.store.type) ? 'Rockstar Games' : 'Mojang Studios' %>.
+          </p>
+        <% } %>
+      </div>
+    </div>
+    <div class="flex gap-4 mt-4 md:mt-0">
+      <% if (cc.theme.socials.discord) { %>
+        <a href="<%= cc.theme.socials.discord %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-discord"></i></a>
+      <% } %>
+      <% if (cc.theme.socials.instagram) { %>
+        <a href="<%= cc.theme.socials.instagram %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-instagram"></i></a>
+      <% } %>
+      <% if (cc.theme.socials.youtube) { %>
+        <a href="<%= cc.theme.socials.youtube %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-youtube"></i></a>
+      <% } %>
+      <% if (cc.theme.socials.twitter) { %>
+        <a href="<%= cc.theme.socials.twitter %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-twitter"></i></a>
+      <% } %>
+      <% if (cc.theme.socials.tiktok) { %>
+        <a href="<%= cc.theme.socials.tiktok %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-tiktok"></i></a>
+      <% } %>
+      <% if (cc.theme.socials.whatsapp) { %>
+        <a href="<%= cc.theme.socials.whatsapp %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+      <% } %>
+      <% if (cc.theme.socials.facebook) { %>
+        <a href="<%= cc.theme.socials.facebook %>" target="_blank" class="text-[#e04a3f] hover:text-white text-2xl transition-colors"><i class="fa-brands fa-facebook"></i></a>
+      <% } %>
+    </div>
+  </div>
+  <div class="text-center text-xs text-[#bfc9d8]/60 pb-3 pt-2">
+    Feito com <span class="text-[#e04a3f]">♥</span> por Rede BOX
+  </div>
+</footer>

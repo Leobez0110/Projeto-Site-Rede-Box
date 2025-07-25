@@ -1,0 +1,90 @@
+<div class="p-6 bg-gradient-to-br from-[#18191c] via-[#2a0e0e] to-[#18191c] rounded-2xl border border-[#e04a3f]/30 shadow-2xl relative overflow-hidden animate-fade-in-up">
+  <!-- Partículas animadas de fundo -->
+  <span class="absolute w-2 h-2 bg-[#e04a3f] rounded-full opacity-40 animate-particle1"></span>
+  <span class="absolute w-1.5 h-1.5 bg-[#a12b2b] rounded-full opacity-30 animate-particle2"></span>
+  <span class="absolute w-1 h-1 bg-white rounded-full opacity-20 animate-particle3"></span>
+  <h2 class="text-2xl font-extrabold text-white tracking-widest drop-shadow-lg flex items-center gap-2 mb-1 animate-fade-in-down">
+    <i class="fa-solid fa-trophy text-[#e04a3f] animate-bounce"></i>
+    DOADORES DO MÊS
+  </h2>
+  <p class="text-[#bfc9d8] mb-4 animate-fade-in-left">Veja quem mais contribuiu para a comunidade!</p>
+  <div class="mt-2 bg-black/50 p-3 rounded-xl shadow-inner animate-fade-in-up">
+    <% if (cc.widget.top_donators.length) { %>
+      <ul class="flex flex-col gap-3">
+        <% cc.widget.top_donators.forEach((donator, index) => { %>
+          <li class="flex gap-3 items-center text-lg font-semibold bg-gradient-to-r from-[#e04a3f]/10 to-transparent px-4 py-2 rounded-lg hover:scale-105 hover:bg-[#e04a3f]/10 transition-all duration-200 shadow-md animate-fade-in-up">
+            <span class="text-xl font-black text-[#e04a3f] drop-shadow-lg animate-pop">
+              <%= index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅' %>
+            </span>
+            <% if (cc.store.type === 'MINECRAFT') { %>
+              <img src="https://mc-heads.net/avatar/<%= donator.username %>/32.png" class="rounded-full border-2 border-[#e04a3f]/40 shadow" />
+            <% } else { %>
+              <img src="<%= cc.cdn_url %>/public/assets/images/medal-<%= index + 1%>.png" width="32" class="drop-shadow" />
+            <% } %>
+            <span class="text-white font-bold tracking-wide flex items-center gap-1">
+              <%= donator.username %>
+              <% if (index === 0) { %>
+                <i class="fa-solid fa-crown text-[#e04a3f] animate-glow"></i>
+              <% } %>
+            </span>
+            <% if (cc.widget.data.show_amount) { %>
+              <span class="ml-auto text-[#e04a3f] font-extrabold text-lg flex items-center gap-1 animate-pulse">
+                <i class="fa-solid fa-coins"></i>
+                <%= donator.spent %>
+              </span>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="text-sm text-[#bfc9d8] text-center animate-fade-in-up">Nenhum jogador até o momento.<br>Seja o primeiro!</p>  
+    <% } %>
+  </div>
+  <style>
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-up { animation: fade-in-up 1s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes fade-in-down {
+      0% { opacity: 0; transform: translateY(-30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-down { animation: fade-in-down 1s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes fade-in-left {
+      0% { opacity: 0; transform: translateX(-30px);}
+      100% { opacity: 1; transform: translateX(0);}
+    }
+    .animate-fade-in-left { animation: fade-in-left 1s .2s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes pop {
+      0% { transform: scale(0.7);}
+      60% { transform: scale(1.2);}
+      100% { transform: scale(1);}
+    }
+    .animate-pop { animation: pop 0.7s cubic-bezier(.39,.575,.565,1);}
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 6px #e04a3f);}
+      50% { filter: drop-shadow(0 0 18px #e04a3f);}
+      100% { filter: drop-shadow(0 0 6px #e04a3f);}
+    }
+    .animate-glow { animation: glow 2s infinite alternate;}
+    @keyframes particle1 {
+      0% { left:10%; top:30%; opacity:.4;}
+      50% { left:80%; top:10%; opacity:.1;}
+      100% { left:10%; top:30%; opacity:.4;}
+    }
+    .animate-particle1 { animation: particle1 7s infinite linear; }
+    @keyframes particle2 {
+      0% { left:70%; top:60%; opacity:.3;}
+      50% { left:20%; top:80%; opacity:.1;}
+      100% { left:70%; top:60%; opacity:.3;}
+    }
+    .animate-particle2 { animation: particle2 9s infinite linear; }
+    @keyframes particle3 {
+      0% { left:50%; top:20%; opacity:.2;}
+      50% { left:60%; top:70%; opacity:.1;}
+      100% { left:50%; top:20%; opacity:.2;}
+    }
+    .animate-particle3 { animation: particle3 8s infinite linear; }
+  </style>
+</div>

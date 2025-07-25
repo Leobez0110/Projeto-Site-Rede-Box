@@ -1,0 +1,78 @@
+<div class="p-6 bg-gradient-to-br from-[#18191c] via-[#2a0e0e] to-[#18191c] rounded-2xl border border-[#e04a3f]/30 shadow-2xl relative overflow-hidden animate-fade-in-up">
+  <!-- Partículas animadas de fundo -->
+  <span class="absolute w-2 h-2 bg-[#e04a3f] rounded-full opacity-40 animate-particle1"></span>
+  <span class="absolute w-1.5 h-1.5 bg-[#a12b2b] rounded-full opacity-30 animate-particle2"></span>
+  <span class="absolute w-1 h-1 bg-white rounded-full opacity-20 animate-particle3"></span>
+  <h2 class="text-2xl font-extrabold text-white tracking-widest drop-shadow-lg flex items-center gap-2 mb-1 animate-fade-in-down">
+    <i class="fa-solid fa-gamepad text-[#e04a3f] animate-bounce"></i>
+    JUNTE-SE A NÓS
+  </h2>
+  <p class="text-[#bfc9d8] mb-4 animate-fade-in-left">Clique no botão abaixo para jogar.</p>
+  <div class="flex flex-col items-center mt-4">
+    <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+      <a 
+        href="<%= cc.store.type.toLowerCase() %>://connect/<%= cc.widget.data.address %>" 
+        class="relative px-8 py-3 rounded-full bg-gradient-to-r from-[#e04a3f] to-[#a12b2b] text-white font-bold shadow-[0_0_24px_4px_rgba(224,74,63,0.15)] transition-all duration-200 hover:scale-110 hover:shadow-[0_0_48px_8px_rgba(224,74,63,0.25)] focus:outline-none focus:ring-2 focus:ring-primary overflow-hidden animate-fade-in-up"
+      >
+        <span class="absolute left-0 top-0 w-full h-full pointer-events-none z-0 animate-glow bg-gradient-to-r from-[#e04a3f]/30 via-transparent to-[#a12b2b]/30 opacity-60"></span>
+        <span class="relative z-10 flex items-center gap-2">
+          <i class="fa-solid fa-play text-xl animate-pulse"></i>
+          JOGAR AGORA!
+        </span>
+      </a>
+    <% } else { %>
+      <button 
+        data-ip="<%= cc.widget.data.address %>" 
+        onclick="copyIp(this)"
+        class="relative px-8 py-3 rounded-full bg-gradient-to-r from-[#e04a3f] to-[#a12b2b] text-white font-bold shadow-[0_0_24px_4px_rgba(224,74,63,0.15)] transition-all duration-200 hover:scale-110 hover:shadow-[0_0_48px_8px_rgba(224,74,63,0.25)] focus:outline-none focus:ring-2 focus:ring-primary overflow-hidden animate-fade-in-up"
+      >
+        <span class="absolute left-0 top-0 w-full h-full pointer-events-none z-0 animate-glow bg-gradient-to-r from-[#e04a3f]/30 via-transparent to-[#a12b2b]/30 opacity-60"></span>
+        <span class="relative z-10 flex items-center gap-2">
+          <i class="fa-solid fa-copy text-xl animate-pulse"></i>
+          JOGAR AGORA!
+        </span>
+      </button>
+    <% } %>
+  </div>
+  <style>
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-up { animation: fade-in-up 1s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes fade-in-down {
+      0% { opacity: 0; transform: translateY(-30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-down { animation: fade-in-down 1s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes fade-in-left {
+      0% { opacity: 0; transform: translateX(-30px);}
+      100% { opacity: 1; transform: translateX(0);}
+    }
+    .animate-fade-in-left { animation: fade-in-left 1s .2s cubic-bezier(.39,.575,.565,1) both;}
+    @keyframes glow {
+      0% { filter: blur(8px) brightness(1.1);}
+      50% { filter: blur(12px) brightness(1.5);}
+      100% { filter: blur(8px) brightness(1.1);}
+    }
+    .animate-glow { animation: glow 2.5s infinite alternate; }
+    @keyframes particle1 {
+      0% { left:10%; top:30%; opacity:.4;}
+      50% { left:80%; top:10%; opacity:.1;}
+      100% { left:10%; top:30%; opacity:.4;}
+    }
+    .animate-particle1 { animation: particle1 7s infinite linear; }
+    @keyframes particle2 {
+      0% { left:70%; top:60%; opacity:.3;}
+      50% { left:20%; top:80%; opacity:.1;}
+      100% { left:70%; top:60%; opacity:.3;}
+    }
+    .animate-particle2 { animation: particle2 9s infinite linear; }
+    @keyframes particle3 {
+      0% { left:50%; top:20%; opacity:.2;}
+      50% { left:60%; top:70%; opacity:.1;}
+      100% { left:50%; top:20%; opacity:.2;}
+    }
+    .animate-particle3 { animation: particle3 8s infinite linear; }
+  </style>
+</div>

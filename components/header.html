@@ -1,0 +1,309 @@
+<!--
+  Header Component
+  ----------------
+  Este arquivo é responsável por renderizar o cabeçalho do site, incluindo:
+  - Barra de anúncio superior
+  - Navegação principal com links sociais
+  - Botão do carrinho e autenticação do usuário
+  - Botão para a loja
+  - Widget de conexão ao servidor
+  - Logo do site
+  - Widget do Discord
+  - Scripts para exibir jogadores online (Minecraft, FiveM, RedM)
+-->
+
+<% 
+// Busca a primeira categoria disponível (não oculta)
+const first_available = cc.categories.find((category) => category.hide_category !== true)
+// Se a categoria não tem subcategoria oculta, pega o slug dela, senão pega o slug da primeira subcategoria
+if (!first_available?.hide_subcategory) {
+  first_category_slug = first_available?.slug
+} else first_category_slug = first_available.sub_categories[0]?.slug 
+%>
+
+<% 
+// Pega o texto do anúncio do topo e aplica destaque para textos entre colchetes
+const top_announce = cc.config('top-announce').replace(/\[(.*?)\]/g, '<span class="font-semibold bg-background px-1.5 py-0.5 rounded animate-pulse">$1</span>') 
+%>
+
+<% if (top_announce) { %>
+  <!-- Barra de anúncio superior, aparece se houver texto configurado -->
+  <a class="w-full bg-gradient-to-r from-[#e04a3f] via-[#a12b2b] to-[#e04a3f] p-2 flex items-center justify-center gap-3 relative z-20 shadow-lg animate-fade-in-down">
+    <p class="font-medium text-white tracking-wider drop-shadow-lg"><%~ top_announce %></p>
+    <span class="ml-2 animate-bounce text-yellow-300 text-xl"><i class="fa-solid fa-bolt"></i></span>
+  </a>
+<% } %>
+
+<header>
+  <!-- Navegação principal do topo -->
+  <nav class="py-8 bg-black/30 border-b-2 border-[#e04a3f]/30 shadow-lg backdrop-blur-md animate-fade-in-down">
+    <div class="container">
+      <ul>
+        <li class="flex items-center justify-between flex-wrap">
+          <!-- Bloco de links sociais e início -->
+          <div class="flex gap-7 flex-wrap justify-between items-center">
+            <!-- Link para a página inicial -->
+            <a class="text-lg font-bold relative group transition-all duration-300 hover:text-primary"
+               href="<%= cc.dist_url %>/">
+              <span class="inline-block animate-fade-in-left">
+                <i class="fa-solid fa-house"></i> INÍCIO
+              </span>
+              <span class="absolute left-0 -bottom-1 w-0 h-[3px] bg-primary group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <!-- Redes sociais com animações e tooltips -->
+            <% 
+              // Array de redes sociais suportadas
+              const socials = [
+                {key: 'discord', icon: 'fa-discord', color: 'text-[#FF0000]'},
+                {key: 'twitter', icon: 'fa-twitter', color: 'text-[#1da1f2]'},
+                {key: 'instagram', icon: 'fa-instagram', color: 'text-[#e1306c]'},
+                {key: 'youtube', icon: 'fa-youtube', color: 'text-[#ff0000]'},
+                {key: 'facebook', icon: 'fa-facebook', color: 'text-[#1877f3]'},
+                {key: 'tiktok', icon: 'fa-tiktok', color: 'text-[#000]'},
+                {key: 'whatsapp', icon: 'fa-whatsapp', color: 'text-[#25d366]'},
+              ];
+              // Renderiza cada rede social se estiver configurada
+              socials.forEach(social => {
+                if (cc.theme.socials[social.key]) { %>
+                  <a href="<%= cc.theme.socials[social.key] %>" target="_blank"
+                    class="text-2xl <%= social.color %> hover:scale-125 transition-transform duration-200 relative group"
+                  >
+                    <i class="fa-brands <%= social.icon %>"></i>
+                    <span class="absolute left-1/2 -translate-x-1/2 -bottom-7 bg-black/80 text-xs text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-20">
+                      <%= social.key.charAt(0).toUpperCase() + social.key.slice(1) %>
+                    </span>
+                  </a>
+            <%  }
+              });
+            %>
+          </div>
+          <!-- Bloco de botões à direita (carrinho, autenticação, loja) -->
+          <div class="flex gap-6 justify-between items-center">
+            <!-- Botão do carrinho, mostra quantidade de itens -->
+            <a 
+              href="<%= cc.dist_url %>/cart"
+              class="relative group h-fit text-lg font-bold transition-transform duration-200 hover:scale-110 bg-gradient-to-tr from-[#e04a3f]/30 to-[#a12b2b]/30 px-4 py-2 rounded-full shadow-lg backdrop-blur-md border border-[#e04a3f]/20"
+            >
+              <i class="fa-solid fa-cart-shopping text-2xl text-white drop-shadow-[0_2px_8px_rgba(224,74,63,0.25)] group-hover:text-primary transition-colors"></i>
+              <span class="absolute -top-2 -right-2 bg-gradient-to-tr from-[#e04a3f] to-[#a12b2b] text-white text-xs font-bold px-2 py-0.5 rounded-full animate-pulse shadow-lg border-2 border-black/40">
+                <%= cc.cart?.length || 0 %>
+              </span>
+            </a>
+            <!-- Avatar do usuário logado, mostra animação e nome -->
+            <% if (cc.store.auth) { %>
+              <a href="/profile" class="relative flex items-center group animate-fade-in-right">
+                <span class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#e04a3f] to-[#a12b2b] flex items-center justify-center shadow-lg ring-2 ring-primary/60 animate-spin-slow border-4 border-white/10">
+                  <img src="<%= cc.store.auth.avatar || '/default-avatar.png' %>" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-white object-cover group-hover:scale-110 transition-transform duration-200" />
+                  <span class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full animate-ping"></span>
+                </span>
+                <span class="ml-2 text-white font-semibold text-base group-hover:text-primary transition-colors duration-200 drop-shadow-lg">
+                  <%= cc.store.auth.username %>
+                </span>
+              </a>
+            <% } else { %>
+            <% } %>
+            <!-- Botão para acessar a loja, com animação e partículas -->
+            <a 
+              href="<%= first_category_slug ? `/category/${first_category_slug}` : '#store' %>" 
+              class="relative px-8 py-3 rounded-full bg-white/10 backdrop-blur-md border border-[#e04a3f]/30 text-white font-bold shadow-[0_0_24px_4px_rgba(224,74,63,0.15)] transition-all duration-200 hover:scale-110 hover:shadow-[0_0_48px_8px_rgba(224,74,63,0.25)] focus:outline-none focus:ring-2 focus:ring-primary overflow-hidden animate-fade-in-right"
+            >
+              <span class="absolute left-0 top-0 w-full h-full pointer-events-none z-0 animate-glow bg-gradient-to-r from-[#e04a3f]/30 via-transparent to-[#a12b2b]/30 opacity-60"></span>
+              <span class="absolute inset-0 pointer-events-none z-0">
+                <!-- Partículas animadas -->
+                <span class="absolute w-2 h-2 bg-[#e04a3f] rounded-full opacity-60 animate-particle1"></span>
+                <span class="absolute w-1.5 h-1.5 bg-[#a12b2b] rounded-full opacity-40 animate-particle2"></span>
+                <span class="absolute w-1 h-1 bg-white rounded-full opacity-30 animate-particle3"></span>
+              </span>
+              <span class="relative z-10 flex items-center gap-2">
+                <i class="fa-solid fa-store text-xl"></i>
+                <span class="tracking-widest">LOJA</span>
+              </span>
+            </a>
+            <!-- Estilos e animações customizadas usadas nos botões e cards -->
+            <style>
+              @keyframes glow {
+                0% { filter: blur(8px) brightness(11);}
+                50% { filter: blur(12px) brightness(15);}
+                100% { filter: blur(8px) brightness(11);}
+              }
+              .animate-glow { animation: glow 1.0 infinite alternate; }
+              @keyframes spin-slow {
+                4% { transform: rotate(0deg);}
+                100% { transform: rotate(360deg);}
+              }
+              .animate-spin-slow { animation: spin-slow 10s linear infinite; }
+              @keyframes fade-in-down {
+                0% { opacity: 0; transform: translateY(-30px);}
+                100% { opacity: 1; transform: translateY(0);}
+              }
+              .animate-fade-in-down { animation: fade-in-down 1s cubic-bezier(.39,.575,.565,1) both;}
+              @keyframes fade-in-left {
+                0% { opacity: 0; transform: translateX(-30px);}
+                100% { opacity: 1; transform: translateX(0);}
+              }
+              .animate-fade-in-left { animation: fade-in-left 1s .2s cubic-bezier(.39,.575,.565,1) both;}
+              @keyframes fade-in-right {
+                0% { opacity: 0; transform: translateX(30px);}
+                100% { opacity: 1; transform: translateX(0);}
+              }
+              .animate-fade-in-right { animation: fade-in-right 1s .2s cubic-bezier(.39,.575,.565,1) both;}
+              @keyframes particle1 {
+                0% { left:10%; top:30%; opacity:.6;}
+                50% { left:80%; top:10%; opacity:.2;}
+                100% { left:10%; top:30%; opacity:.6;}
+              }
+              .animate-particle1 { animation: particle1 5s infinite linear; }
+              @keyframes particle2 {
+                0% { left:70%; top:60%; opacity:.4;}
+                50% { left:20%; top:80%; opacity:.1;}
+                100% { left:70%; top:60%; opacity:.4;}
+              }
+              .animate-particle2 { animation: particle2 7s infinite linear; }
+              @keyframes particle3 {
+                0% { left:50%; top:20%; opacity:.3;}
+                50% { left:60%; top:70%; opacity:.1;}
+                100% { left:50%; top:20%; opacity:.3;}
+              }
+              .animate-particle3 { animation: particle3 6s infinite linear; }
+            </style>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Banner principal centralizado, com fundo, overlay e cards -->
+  <div class="min-h-64 flex justify-center items-center relative animate-fade-in-up" style="background: none;">
+    <!-- Caixa centralizada com o banner de fundo -->
+    <div 
+      class="w-full max-w-7xl min-h-96 rounded-xl shadow-2xl relative flex items-center justify-around overflow-hidden"
+      style="
+        background-image: url('<%= cc.theme.background %>');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      "
+    >
+      <!-- Overlay vermelho escuro translúcido sobre o banner -->
+      <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-black/80 via-[#a12b2b]/40 to-black/80 z-0"></div>
+      <!-- Efeito de luz animada no centro -->
+      <div class="absolute left-1/2 top-1/2 w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 bg-[#e04a3f]/10 rounded-full blur-3xl animate-pulse z-0"></div>
+      <!-- Cards e logo centralizados -->
+      <div class="flex items-center justify-around w-full z-10 relative">
+        <div class="flex items-center justify-around w-full z-10 gap-8 flex-wrap">
+          <% const widget = cc.widgets.find((widget) => widget.type === 'CONNECTION_BOARD') %>
+          <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+            <!-- Card de conexão para FIVEM/REDM, abre o launcher do jogo -->
+         `
+          <% } else { %>
+            <!-- Card de conexão para outros servidores, copia IP ao clicar -->
+            <button
+              class="flex items-center bg-[#18191c]/80 border border-[#a12b2b] rounded-2xl shadow-2xl px-10 py-8 min-w-[320px] max-w-xs transition-all duration-200 hover:scale-105 hover:shadow-[0_0_48px_12px_rgba(255,0,0,0.45)] animate-fade-in-left"
+              data-ip="<%= widget?.data.address ?? '' %>"
+              onclick="copyIp(this)"
+              style="text-decoration: none;"
+            >
+              <div>
+                <div class="font-extrabold text-2xl text-white leading-tight drop-shadow-lg">
+                  CONECTE-SE<br>
+                  <span class="relative">
+                    JÁ!
+                    <span class="block w-16 h-[3px] bg-[#e04a3f] absolute left-0 -bottom-1 rounded"></span>
+                  </span>
+                </div>
+                <div class="text-[#bfc9d8] text-base font-medium mt-2">
+                  <% if (cc.store.type !== 'GTA-SA' && widget?.data.address) { %>
+                    <span>
+                      <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
+                    </span>
+                  <% } %>
+                  Clique para jogar
+                </div>
+              </div>
+              <i class="text-6xl text-[#e04a3f] ml-8 animate-bounce">⚡</i>
+            </button>
+          <% } %>
+          <!-- Logo do site, centralizada, com efeito neon e zoom ao passar mouse -->
+          <div 
+            class="
+              cursor-pointer animate-fade-in-up
+              <%= cc.theme.logo_position === 'START' ? 'order-first' : 
+              cc.theme.logo_position === 'END' ? 'order-last' : ''%>
+            "
+            style="transition: transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.10)'"
+            onmouseout="this.style.transform='scale(1)'"
+          >
+            <a href="<%= cc.dist_url %>/">
+              <% if (cc.theme.logo) { %>
+                <img src="<%= cc.theme.logo %>" class="max-w-[256px] drop-shadow-[0_0_32px_#e04a3f]" />
+              <% } else { %>
+                <h1 class="text-5xl font-bold font-['Orbitron'] text-center uppercase drop-shadow-[0_0_32px_#e04a3f] text-white tracking-widest animate-glow">
+                  <%= cc.store.name %>
+                </h1>
+              <% } %>
+            </a>
+          </div>
+          <!-- Card do Discord, igual ao card de conexão -->
+          <a
+            href="<%= cc.theme.socials.discord ? cc.theme.socials.discord : '#' %>"
+            target="_blank"
+            class="flex items-center bg-[#18191c]/80 border border-[#a12b2b] rounded-2xl shadow-2xl px-10 py-8 min-w-[320px] max-w-xs transition-all duration-200 hover:scale-105 hover:shadow-[0_0_48px_12px_rgba(255,0,0,0.45)] animate-fade-in-left relative overflow-hidden"
+            style="text-decoration: none;"
+          >
+            <span class="absolute left-0 top-0 w-full h-full pointer-events-none z-0 animate-glow bg-gradient-to-r from-[#e04a3f]/20 via-transparent to-[#a12b2b]/20 opacity-60"></span>
+            <span class="absolute w-2 h-2 bg-[#e04a3f] rounded-full opacity-60 animate-particle1"></span>
+            <span class="absolute w-1.5 h-1.5 bg-[#a12b2b] rounded-full opacity-40 animate-particle2"></span>
+            <span class="absolute w-1 h-1 bg-white rounded-full opacity-30 animate-particle3"></span>
+            <div class="relative z-10">
+              <div class="font-extrabold text-2xl text-white leading-tight drop-shadow-lg">
+                ENTRAR NO<br>
+                <span class="relative">
+                  DISCORD
+                  <span class="block w-16 h-[3px] bg-[#e04a3f] absolute left-0 -bottom-1 rounded"></span>
+                </span>
+              </div>
+              <div class="text-[#bfc9d8] text-base font-medium mt-2">
+                Participe da comunidade
+              </div>
+            </div>
+            <i class="fa-brands fa-discord text-6xl text-[#e04a3f] ml-8 animate-bounce"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<% if (widget?.data.address) { %>
+  <% if (cc.store.type === 'MINECRAFT') { %>
+    <!-- Script para buscar e exibir o número de jogadores online em servidores Minecraft -->
+    <script>
+      $(() => {
+        const online_players_label = $('.online-players')
+        const ip = online_players_label.attr('data-ip')
+        $.get('https://mcapi.us/server/status?ip=' + ip)
+          .then((res) => {
+            online_players_label.text(res.players.now)
+          })
+          .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+  <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+    <!-- Script para buscar e exibir o número de jogadores online em servidores FIVEM/REDM -->
+    <script>
+      $(() => {
+        const online_players_label = $('.online-players')
+        const ip = online_players_label.attr('data-ip')
+        const cfx_id = ip.split('cfx.re/join/')[1]
+        if (!cfx_id || cfx_id.length < 6) return
+        $.get('https://players.centralcart.workers.dev/' + cfx_id)
+          .then((res) => {
+            online_players_label.text(res)
+          })
+          .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+<% } %>

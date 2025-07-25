@@ -1,0 +1,216 @@
+<% layout('@layouts/platform', { show_layout: true }) %>
+
+<div class="container max-w-screen-xl mx-auto px-4 py-8 min-h-screen">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    
+    <div class="lg:col-span-1">
+      <div class="bg-background border border-foreground/10 rounded-lg p-6 sticky top-24">
+        
+        <div class="text-center mb-6 pb-6 border-b border-foreground/10">
+          <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="icon-user text-3xl text-primary"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-1"><%= cc.user.name %></h3>
+          <p class="text-sm text-muted-foreground">Meu perfil</p>
+        </div>
+
+        <nav class="space-y-2">
+          <a href="/account/orders" class="flex items-center gap-3 px-3 py-2 rounded-md bg-primary text-primary-foreground font-medium">
+            <i class="icon-package"></i>
+            Minhas compras
+          </a>
+          
+          <div class="pt-4 mt-4 border-t border-foreground/10">
+            <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+              <i class="icon-house"></i>
+              Voltar para a loja
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="lg:col-span-3">
+      <div class="mb-6">
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex space-x-1.5 items-center">
+            <li>
+              <a href="/" class="hover:underline text-muted-foreground">Início</a>
+            </li>
+            <i class="icon-chevron-right text-muted-foreground"></i>
+            <li>
+              <span class="font-semibold">Meus pedidos</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl font-bold">Meus pedidos</h1>
+        </div>
+
+        <% if (cc.orders && cc.orders.data && cc.orders.data.length > 0) { %>
+          <div class="space-y-4">
+            <% cc.orders.data.forEach((order) => { %>
+              <% 
+                const date = new Date(order.created_at);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+
+                const created_at = `${day}/${month}/${year} às ${hours}:${minutes}`;
+              %>
+
+              <%
+                const status_data = {
+                  PENDING: {
+                    color: 'orange-400',
+                    label: 'Pagamento pendente',
+                    icon: 'clock'
+                  },
+                  APPROVED: {
+                    color: 'green-500',
+                    label: 'Pagamento aprovado!',
+                    icon: 'circle-check'
+                  },
+                  REJECTED: {
+                    color: 'red-500',
+                    label: 'Pagamento rejeitado',
+                    icon: 'circle-x'
+                  },
+                  CANCELED: {
+                    color: 'red-500',
+                    label: 'Pagamento cancelado',
+                    icon: 'circle-x'
+                  },
+                  REFUNDED: {
+                    color: 'yellow-500',
+                    label: 'Pagamento reembolsado',
+                    icon: 'rotate-ccw'
+                  },
+                  CHARGEDBACK: {
+                    color: 'purple-500',
+                    label: 'Pagamento contestado',
+                    icon: 'rotate-ccw'
+                  },
+                }
+
+                const status = status_data[order.status]
+              %>
+
+              <div class="border border-foreground/10 rounded-lg p-6 hover:border-foreground/20 transition-colors bg-background">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-<%= status.color %>"></div>
+                    <div>
+                      <span class="font-medium text-sm sm:text-base"><%= status.label %></span>
+                      <p class="text-xs sm:text-sm text-muted-foreground">#<%= order.internal_id %></p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-bold text-base sm:text-lg"><%= cc.currency(order.price) %></p>
+                    <p class="text-xs sm:text-sm text-muted-foreground"><%= created_at %></p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+                  <div class="flex gap-4 md:gap-8 flex-wrap flex-1">
+                    <div class="flex items-center gap-2 text-sm">
+                      <i class="icon-credit-card text-muted-foreground"></i>
+                      <span class="text-muted-foreground">Pagamento:</span>
+                      <span class="font-medium whitespace-nowrap"><%= order.gateway_display %></span>
+                    </div>
+  
+                    <div class="flex items-center gap-2 text-sm">
+                      <i class="icon-package text-muted-foreground"></i>
+                      <span class="text-muted-foreground">Itens:</span>
+                      <span class="font-medium"><%= order.packages ? order.packages.length : 0 %> item<%= order.packages && order.packages.length !== 1 ? 's' : '' %></span>
+                    </div>
+  
+                    <div class="flex items-center gap-2 text-sm">
+                      <i class="icon-tag text-muted-foreground"></i>
+                      <span class="text-muted-foreground">Cupom:</span>
+                      <span class="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium"><%= order.promo_code || 'Nenhum' %></span>
+                    </div>
+                  </div>
+  
+                  <div class="flex justify-end w-full md:w-auto">
+                    <a href="/order/<%= order.internal_id %>" class="btn-outline w-full md:w-auto h-9 text-sm">
+                      <i class="icon-eye me-2"></i>
+                      Ver detalhes
+                    </a>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <% if (cc.orders.meta && cc.orders.meta.last_page > 1) { %>
+            <div class="flex items-center justify-center gap-2 mt-8">
+              <% if (cc.orders.meta.current_page > 1) { %>
+                <a href="?page=<%= cc.orders.meta.current_page - 1 %>" class="btn-outline h-10 w-10 p-0 flex items-center justify-center">
+                  <i class="icon-chevron-left"></i>
+                </a>
+              <% } %>
+
+              <% 
+                const startPage = Math.max(1, cc.orders.meta.current_page - 2);
+                const endPage = Math.min(cc.orders.meta.last_page, cc.orders.meta.current_page + 2);
+              %>
+
+              <% if (startPage > 1) { %>
+                <a href="?page=1" class="btn-outline h-10 w-10 p-0 flex items-center justify-center">1</a>
+                <% if (startPage > 2) { %>
+                  <span class="text-muted-foreground">...</span>
+                <% } %>
+              <% } %>
+
+              <% for (let i = startPage; i <= endPage; i++) { %>
+                <% if (i === cc.orders.meta.current_page) { %>
+                  <span class="btn-primary h-10 w-10 p-0 flex items-center justify-center"><%= i %></span>
+                <% } else { %>
+                  <a href="?page=<%= i %>" class="btn-outline h-10 w-10 p-0 flex items-center justify-center"><%= i %></a>
+                <% } %>
+              <% } %>
+
+              <% if (endPage < cc.orders.meta.last_page) { %>
+                <% if (endPage < cc.orders.meta.last_page - 1) { %>
+                  <span class="text-muted-foreground">...</span>
+                <% } %>
+                <a href="?page=<%= cc.orders.meta.last_page %>" class="btn-outline h-10 w-10 p-0 flex items-center justify-center"><%= cc.orders.meta.last_page %></a>
+              <% } %>
+
+              <% if (cc.orders.meta.current_page < cc.orders.meta.last_page) { %>
+                <a href="?page=<%= cc.orders.meta.current_page + 1 %>" class="btn-outline h-10 w-10 p-0 flex items-center justify-center">
+                  <i class="icon-chevron-right"></i>
+                </a>
+              <% } %>
+            </div>
+
+            <div class="text-center text-sm text-muted-foreground mt-4">
+              Página <%= cc.orders.meta.current_page %> de <%= cc.orders.meta.last_page %> 
+              (<%= cc.orders.meta.total %> pedido<%= cc.orders.meta.total !== 1 ? 's' : '' %>)
+            </div>
+          <% } %>
+        <% } else { %>
+          <div class="text-center py-16">
+            <div class="w-20 h-20 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+              <i class="icon-package text-3xl text-muted-foreground"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Nenhum pedido encontrado</h3>
+            <p class="text-muted-foreground mb-8 max-w-md mx-auto">
+              Você ainda não possui pedidos aprovados. Faça sua primeira compra e aproveite nossos produtos!
+            </p>
+            <a href="/" class="btn-primary px-4 w-fit mx-auto h-9">
+              <i class="icon-shopping-cart me-2"></i>
+              Ver produtos
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
